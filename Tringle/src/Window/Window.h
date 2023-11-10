@@ -2,15 +2,7 @@
 
 #include <iostream>
 #include <glad.h>
-
-#ifdef _WIN32
-    #include <glfw3.h>
-#endif
-
-#ifdef __APPLE__
-    #define GL_SILENCE_DEPRECATION
-    #include <glfw3.h>
-#endif
+#include <glfw3.h>
 
 class Window
 {
