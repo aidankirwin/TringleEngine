@@ -46,14 +46,11 @@ void Window::StartUp()
     glfwSetWindowUserPointer(mWindow, reinterpret_cast<void*>(this));
 
     // TODO: make this conditional for resizable windows only
-    // Disabled for macos for now
-    #ifdef _WIN32
-        auto framebufferCallback = [](GLFWwindow* glfwWindow, int width, int height)
-        {
-            Window* window = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
-            window->FramebufferSizeCallback(width, height);
-        };
-    #endif
+    auto framebufferCallback = [](GLFWwindow* glfwWindow, int width, int height)
+    {
+        Window* window = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
+        window->FramebufferSizeCallback(width, height);
+    };
 
     // TODO: test once drawcalls are setup
     // glfwSetFramebufferSizeCallback(mWindow, framebufferCallback);

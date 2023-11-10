@@ -44,26 +44,11 @@ foreach(item ${SOURCES})
 	message(STATUS "[LOG] - ${item}")
 endforeach()
 
-if(WIN32)
-	# Run cmake modules to find glfw and glm
-	list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-endif()
+# Run cmake modules to find glfw and glm
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 
-if(APPLE)
-	# TODO: add support for x86_64 processors
-	set(CMAKE_APPLE_SILICON_PROCESSOR arm)
-	# Use cmake -DCMAKE_APPLE_SILICON_PROCESSOR=arm64 if this var definition fails
-	target_include_directories(TringleApp PUBLIC ${OPENGL_INCLUDE_DIR})
-	target_link_libraries(TringleApp  "-framework Cocoa")
-	target_link_libraries(TringleApp  "-framework OpenGL")
-	target_link_libraries(TringleApp  "-framework IOKit")
-	target_link_libraries(TringleApp glfw ${OPENGL_gl_LIBRARY})
-endif()
-
-if(WIN32)
-	target_link_libraries(TringleApp PRIVATE ${OPENGL_gl_LIBRARY})
-	target_link_libraries(TringleApp PRIVATE ${GLFW3_LIBRARY})
-endif()
+target_link_libraries(TringleApp PRIVATE ${OPENGL_gl_LIBRARY})
+target_link_libraries(TringleApp PRIVATE ${GLFW3_LIBRARY})

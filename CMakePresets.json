@@ -56,20 +56,6 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
-        },
-        
-        {
-            "name": "Mac",
-            "displayName": "macos",
-            "description": "Using compilers: C = /opt/homebrew/bin/aarch64-apple-darwin20-gcc-13, CXX = /opt/homebrew/bin/aarch64-apple-darwin20-g++-13",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_C_COMPILER": "/opt/homebrew/bin/aarch64-apple-darwin20-gcc-13",
-                "CMAKE_CXX_COMPILER": "/opt/homebrew/bin/aarch64-apple-darwin20-g++-13",
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
         }
     ]
 }
