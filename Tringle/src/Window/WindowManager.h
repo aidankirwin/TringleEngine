@@ -1,11 +1,11 @@
 #pragma once
 
 #include <string>
-
+#include <map>
 #include "Window.h"
 #include "Singleton.h"
-#include "Core.h"
 
+// Currently multiple windows are supported. May want to remove
 class WindowManager : public Singleton<WindowManager>
 {
 friend class Singleton<WindowManager>;
@@ -36,7 +36,7 @@ public:
 
 private:
     // All windows
-    WindowMap* mWindows = new WindowMap();
+    std::map<std::string, Window*>* mWindows = new std::map<std::string, Window*>();
 
     // Private state var
     ManagerState mState = ManagerState::NOT_STARTED;

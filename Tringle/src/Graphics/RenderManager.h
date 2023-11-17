@@ -1,8 +1,11 @@
 #pragma once
 
+#include <map>
+#include <string>
 #include "Mesh.h"
+#include "Shader.h"
+#include "Texture.h"
 #include "Singleton.h"
-#include "Core.h"
 
 class RenderManager : public Singleton<RenderManager>
 {
@@ -20,5 +23,14 @@ public:
     void DeleteMesh(int id);
     Mesh* GetMesh(int id);
 private:
-    MeshMap* mMesh;
+    std::map<std::string, Mesh*>* mMesh;
+    std::map<std::string, Texture*>* mTexture;
+    std::map<std::string, Shader*>* mShader;
+
+    // Mesh handling
+    void InitializeMesh(Mesh mesh);
+    void Draw(Mesh mesh, Shader shader, Texture texture);
+
+    // Texture handling
+
 };

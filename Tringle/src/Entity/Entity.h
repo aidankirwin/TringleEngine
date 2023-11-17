@@ -1,9 +1,8 @@
 #pragma once
 
 #include <string>
-
-#include "Core.h"
 #include "EventManager.h"
+#include "Component.h"
 
 // TODO: separate definitions and declarations
 
@@ -59,7 +58,7 @@ public:
 
 private:
 	// Component pointer vector
-	ComponentMap mComponents;
+	std::map<std::string, Component*> mComponents;
 
 	// Entity instance unique id
 	unsigned int mId;

@@ -1,8 +1,9 @@
 #pragma once
+
+#include <string>
+#include <map>
 #include "Timer.h"
 #include "Singleton.h"
-#include "Core.h"
-#include <string>
 
 class TimeManager : public Singleton<TimeManager>
 {

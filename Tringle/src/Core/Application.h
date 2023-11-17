@@ -6,7 +6,7 @@
 #include "SceneManager.h"
 #include "TimeManager.h"
 #include "Singleton.h"
-#include "Core.h"
+
 #include "EventManager.h"
 
 namespace Tringle

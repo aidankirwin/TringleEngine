@@ -8,12 +8,16 @@ struct Vertex
     glm::vec3 Position;
     glm::vec4 Color;
     glm::vec2 TexCoord;
-    glm::vec3 Normals;
+};
+
+struct Transform
+{
+
 };
 
 struct Mesh
 {
-    int VAO;
-    int VBO;
     std::vector<Vertex> Vertices;
+    std::vector<unsigned int> Indices;
+    unsigned int VAO, VBO, EBO;
 };
