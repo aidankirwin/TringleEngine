@@ -8,15 +8,25 @@ Timer::~Timer()
 {
 }
 
-Timer::Start()
+void Timer::Start()
 {
 	mDeltaTime = 0;
 	mLastFrame = static_cast<float>(glfwGetTime());
 }
 
-Timer::Update()
+void Timer::Update()
 {
 	float currentFrame = static_cast<float>(glfwGetTime());
 	mDeltaTime = currentFrame - mLastFrame;
 	mLastFrame = currentFrame;
+}
+
+void Timer::Stop()
+{
+
+}
+
+float Timer::GetDelta()
+{
+
 }

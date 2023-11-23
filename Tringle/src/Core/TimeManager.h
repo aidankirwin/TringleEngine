@@ -21,6 +21,7 @@ public:
     void SetMainTimer(std::string SID);
 
 private:
-    std::map<std::string, Timer*> mTimers;
+    typedef std::map<std::string, Timer*> TimerMap;
+    TimerMap* mTimers = new TimerMap();
     std::string mMainTimer;
 };
