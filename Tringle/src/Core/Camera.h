@@ -16,8 +16,18 @@ public:
 	};
 private:
 	Projection mView;
-
+	glm::vec3 mPosition;
+	float mAspectRatio;
 
 	glm::mat4 GetOrthoProjMat();
 	glm::mat4 GetPerspProjMat();
+};
+
+struct CameraProps
+{
+	float Up;
+	float Front;
+	float Yaw;
+	float Pitch;
+	float FOV;
 };

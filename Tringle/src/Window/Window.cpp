@@ -41,6 +41,10 @@ void Window::StartUp()
 
     glViewport(0, 0, mWidth, mHeight);
 
+    // What the hell was I thinking when I wrote this
+    // TODO: fix
+    // - Aidan
+
     // GLFW user pointer for callbacks
     // Stores address of instance handling mWindow to forward to callbacks
     glfwSetWindowUserPointer(mWindow, reinterpret_cast<void*>(this));
@@ -66,7 +70,7 @@ void Window::PollEvents()
     glfwPollEvents();
 }
 
-void Window::Update()
+void Window::SwapBuffers()
 {
     glClearColor(0.1f, 0.3f, 0.5f, 1.0f); // TODO: remove placeholder
     glClear(GL_COLOR_BUFFER_BIT);

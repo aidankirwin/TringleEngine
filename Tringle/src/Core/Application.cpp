@@ -8,34 +8,45 @@ namespace Tringle
     void Application::Run()
     {
         // Get manager singletons
-        mWindowManager = Singleton<WindowManager>::GetInstance();
         mSceneManager = Singleton<SceneManager>::GetInstance(); // TODO
-        mTimeManager = Singleton<TimeManager>::GetInstance(); // TODO
+        mTimeManager = Singleton<TimeManager>::GetInstance();
         mRenderManager = Singleton<RenderManager>::GetInstance();
 
         StartUp();                              // User defined app start up
 
         // Start up engine systems in the correct order
-        mWindowManager.StartUp();
         mRenderManager.StartUp();
+        mTimeManager.AddTimer("DEFAULT");
+        mTimeManager.SetMainTimer("DEFAULT");
+
+        // Create window
+        mWindow = new Window(800, 600, "test");
+        mWindow->StartUp();
 
         // Main game loop.
         while (mRunning)
         {
-            mWindowManager.WindowPollEvents();  // Poll events
-            mTimeManager.Update();              // Update active timers
-
-            Update();                           // User defined app update
+            // Window handling
+            mWindow->PollEvents();               // Poll events
 
             // Update engine systems in order
+            mTimeManager.Update();              // Update active timers
+            
+            Update();                           // User defined app update
+            
             mRenderManager.Update();            // Update active renderables
-            mWindowManager.Update();            // Swap buffers
+
+            // More window handling
+            mWindow->SwapBuffers();             // Swap buffers
         }
+
+        // Close window
+        mWindow->ShutDown();
 
         ShutDown();                             // User defined app shut down
 
         // Shut down engine systems in the reverse order
         mRenderManager.ShutDown();
-        mWindowManager.ShutDown();
+        mTimeManager.ShutDown();
     }
 }

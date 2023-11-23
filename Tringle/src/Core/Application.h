@@ -2,11 +2,10 @@
 
 #include "Application.h"
 #include "RenderManager.h"
-#include "WindowManager.h"
+#include "Window.h"
 #include "SceneManager.h"
 #include "TimeManager.h"
 #include "Singleton.h"
-
 #include "EventManager.h"
 
 namespace Tringle
@@ -39,8 +38,9 @@ namespace Tringle
         }
 
     private:
+        Window* mWindow;
+
         // Subsystem manager singletons
-        WindowManager mWindowManager;
         RenderManager mRenderManager;
         SceneManager   mSceneManager;
         TimeManager     mTimeManager;

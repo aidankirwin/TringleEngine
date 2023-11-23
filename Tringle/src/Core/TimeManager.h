@@ -10,12 +10,17 @@ class TimeManager : public Singleton<TimeManager>
 public:
     ~TimeManager() {}
 
-    void StartUp();
     void Update();
     void ShutDown();
 
-    void AddTimer(Timer* timer, std::string SID);
-    Timer* GetMainTimer();
-private:
+    Timer* AddTimer(std::string SID);
+    Timer* GetTimer(std::string SID);
+    void RemoveTimer(std::string SID);
 
+    Timer* GetMainTimer();
+    void SetMainTimer(std::string SID);
+
+private:
+    std::map<std::string, Timer*> mTimers;
+    std::string mMainTimer;
 };

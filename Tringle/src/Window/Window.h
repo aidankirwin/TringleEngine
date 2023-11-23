@@ -11,13 +11,14 @@ public:
     Window();
     ~Window();
     void StartUp();
-    void Update();
+    void SwapBuffers();
     void ShutDown();
 
     void PollEvents();
     void FramebufferSizeCallback(int newWidth, int newHeight);
     bool isResizable = false;
     GLFWwindow* GetGLFWWindow();
+
 private:
     GLFWwindow* mWindow;
     int mWidth, mHeight;
