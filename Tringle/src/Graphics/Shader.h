@@ -8,6 +8,7 @@
 #include <sstream>
 
 #include "glm.hpp"
+#include "glad.h"
 
 class Shader
 {
@@ -31,8 +32,9 @@ public:
 	*	(b) mat4 view
 	*	(c) mat4 projection
 	*	(d) sampler2D texture
-	* These uniforms are required for calculating
-	* the gl_Position of a textured mesh.
+	* The uniforms (a)-(c) are required for calculating
+	* the gl_Position of a textured mesh, where (d) is the
+	* applied texture.
 	*
 	* ---- 2. Standard Attributes ----
 	* Similarly, user may set additional attributes in their
@@ -56,8 +58,6 @@ public:
 	unsigned int ID;
 
 private:
-	void CompileShader(int shader);
-	void LinkProgram(int program);
 	void Error(std::string type);
 
 	std::map<std::string, int> mUniformLocations;
