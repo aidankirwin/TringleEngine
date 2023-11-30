@@ -5,33 +5,17 @@ Camera::Camera(float screenWidth, float screenHeight) :
 {
 	mAspectRatio = mScreenWidth / mScreenHeight;
 
+	mWorldUp = WORLDUP;
 	mFov = FOV;
 	mUp = UP;
-	mFront = FRONT;
 	mView = VIEW;
+
+	EulerAngles angles(YAW, PITCH);
+	UpdateView(angles);
 }
 
-Camera::Camera(glm::vec3 position, float screenWidth, float screenHeight, Projection type) :
-	mPosition(position), mScreenWidth(screenWidth), mScreenHeight(screenHeight), mView(type)
-{
-	mAspectRatio = mScreenWidth / mScreenHeight;
-
-	mFov = FOV;
-	mUp = UP;
-	mFront = FRONT;
-}
-
-Camera::Camera(glm::vec3 position, float screenWidth, float screenHeight, float fov, Projection type) :
-	mPosition(position), mScreenWidth(screenWidth), mScreenHeight(screenHeight), mView(type), mFov(fov)
-{
-	mAspectRatio = mScreenWidth / mScreenHeight;
-
-	mUp = UP;
-	mFront = FRONT;
-}
-
-Camera::Camera(glm::vec3 position, float screenWidth, float screenHeight, float fov, Projection type, EulerAngles angles) :
-	mPosition(position), mScreenWidth(screenWidth), mScreenHeight(screenHeight), mView(type), mFov(fov)
+Camera::Camera(glm::vec3 position, glm::vec3 worldUp, float screenWidth, float screenHeight, float fov, Projection type, EulerAngles angles) :
+	mPosition(position), mWorldUp(worldUp), mScreenWidth(screenWidth), mScreenHeight(screenHeight), mView(type), mFov(fov)
 {
 	mAspectRatio = mScreenWidth / mScreenHeight;
 
@@ -55,9 +39,24 @@ glm::mat4 Camera::GetViewMatrix()
 
 void Camera::UpdateView(EulerAngles angles)
 {
-	// TODO
-}
+	// Clamp pitch to be between -89 degrees and 89 degrees
+	// If front and worldUp are parallel then we can not define a right vector (cross product yields 0 vector)
+	// Up vector becomes zero vector, view matrix is indeterminate
+	if (angles.pitch > 89.0f) angles.pitch = 89.0f;
+	if (angles.pitch < -89.0f) angles.pitch = -89.0f;
 
+	// Calculate new front vector
+	mFront.x = cos(glm::radians(angles.yaw)) * cos(glm::radians(angles.pitch));
+	mFront.y = sin(glm::radians(angles.pitch));
+	mFront.z = sin(glm::radians(angles.yaw)) * cos(glm::radians(angles.pitch));
+	mFront = glm::normalize(mFront);
+
+	// Update right and up vectors
+	// Right vector is always orthogonal to the front-worldUp plane
+	mRight = glm::normalize(glm::cross(mFront, mWorldUp));
+	// Up vector is always orthogonal to the front-right plane
+	mUp = glm::normalize(glm::cross(mRight, mFront));
+}
 
 glm::mat4 Camera::GetPerspProjMat()
 {
@@ -69,7 +68,6 @@ glm::mat4 Camera::GetPerspProjMat()
 	*	T near,
 	*	T far);
 	* 
-	* ---- Summary ----
 	* Given parameters that define the dimensions of the frustrum,
 	* glm::perspective outputs a perspective projection matrix.
 	*	- 1st param: FOV in radians, how large the viewspace is
@@ -85,7 +83,6 @@ glm::mat4 Camera::GetPerspProjMat()
 glm::mat4 Camera::GetOrthoProjMat()
 {
 	/*
-	* ---- glm::ortho Function Declaration ----
 	* template <typename T>
 	* GLM_FUNC_DECL tmat4x4<T, defaultp> ortho(
 	*	T left,
@@ -95,7 +92,6 @@ glm::mat4 Camera::GetOrthoProjMat()
 	*	T zNear,
 	*	T zFar);
 	* 
-	* ---- Summary ----
 	* Given parameters that define the dimensions of the frustrum,
 	* glm::ortho outputs an orthographic projection matrix.
 	*	- 1st and 2nd params: left and right coordinates of frustrum

@@ -23,6 +23,8 @@ namespace Tringle
         mWindow = new Window(800, 600, "test");
         mWindow->StartUp();
 
+        Shader shaderTest("default.vs", "default.fs");
+
         // Main game loop.
         while (mRunning)
         {

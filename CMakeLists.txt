@@ -44,6 +44,19 @@ foreach(item ${SOURCES})
 	message(STATUS "[LOG] - ${item}")
 endforeach()
 
+# Get shader files
+file(GLOB_RECURSE SHADERS
+	${CMAKE_CURRENT_SOURCE_DIR}/Tringle/assets/*.vs
+	${CMAKE_CURRENT_SOURCE_DIR}/Tringle/assets/*.fs
+	${CMAKE_CURRENT_SOURCE_DIR}/Sandbox/assets/*.vs
+	${CMAKE_CURRENT_SOURCE_DIR}/Sandbox/assets/*.fs	
+)
+file(COPY ${SHADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+message(STATUS "[LOG] Copied shaders to binary directory:")
+foreach(item ${SHADERS})
+	message(STATUS "[LOG] - ${item}")
+endforeach()
+
 # Run cmake modules to find glfw and glm
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 

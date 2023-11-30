@@ -60,6 +60,8 @@ public:
 private:
 	void Error(std::string type);
 
+	// Uniform and attribute maps
+	// Can access this data through GL calls but cleaner to store here
 	std::map<std::string, int> mUniformLocations;
 	std::map<std::string, int> mAttribLocations;
 };

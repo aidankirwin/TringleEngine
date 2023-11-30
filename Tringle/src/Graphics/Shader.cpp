@@ -54,6 +54,7 @@ Shader::Shader(std::string vertPath, std::string fragPath)
     /*
     * ---- 2. Compile Shader Code ----
     */
+
     unsigned int vertex, fragment;
 
     // Vertex Shader
@@ -81,6 +82,45 @@ Shader::Shader(std::string vertPath, std::string fragPath)
     /*
     * ---- 4. Fill Uniform and Attribute Maps ----
     */
+
+    // Uniforms
+    GLint count;
+
+    const GLsizei bufSize = 16; // maximum name length
+    GLsizei length; // name length
+    GLint size; // size of variable
+    GLenum type; // type of variable (float, vec3, mat3, etc.)
+    GLchar name[bufSize]; // variable name
+
+    // Sets count to number of active uniforms
+    glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &count);
+
+    for (int i = 0; i < count; i++)
+    {
+        /*
+        * void glGetActiveUniform(GLuint program,
+ 	    *   GLuint index,
+ 	    *   GLsizei bufSize,
+ 	    *   GLsizei *length,
+ 	    *   GLint *size,
+ 	    *   GLenum *type,
+ 	    *   GLchar *name);
+        * 
+        * program: specifies program object, equal to Shader::ID
+        * index: index of the uniform variable to be quieried
+        * bufSize: max number of characters OpenGL can write to the character buffer (name)
+        * length: returns number of characters written by OpenGL to name
+        * size: returns size of the uniform variable
+        * type: returns data type of uniform variable
+        * name: returns string containing name of variable
+        */
+        glGetActiveUniform(ID, (GLuint)i, bufSize, &length, &size, &type, name);
+        
+        std::string strName((char*)&name[0], length - 1);
+        mUniformLocations.insert(std::make_pair(strName, i));
+
+        std::cout << "Uniform name:" << strName << '\n' << "Uniform location:" << i << '\n';
+    }
 }
 
 Shader Shader::Use()
@@ -102,6 +142,13 @@ void Shader::SetMat4(std::string name, glm::mat4 data)
 {
 
 }
+
+
+void Shader::SetVec2(std::string name, glm::vec2 data)
+{
+
+}
+
 
 void Shader::SetVec3(std::string name, glm::vec3 data)
 {
