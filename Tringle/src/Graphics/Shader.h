@@ -13,7 +13,10 @@
 class Shader
 {
 public:
-	Shader(std::string vertPath, std::string fragPath);
+	Shader();
+
+	// Creates a shader program given a vertex and fragment shader file
+	void LoadFromFiles(std::string vertPath, std::string fragPath);
 
 	/*
 	* Makes this shader the active shader in the app
@@ -44,9 +47,9 @@ public:
 	*/
 
 	// Required default uniform setters
-	void SetMat4(std::string name, glm::mat4 data);
-	void SetVec2(std::string name, glm::vec2 data);
-	void SetVec3(std::string name, glm::vec3 data);
+	void SetMat4(std::string name, glm::mat4& data);
+	void SetVec2(std::string name, glm::vec2& data);
+	void SetVec3(std::string name, glm::vec3& data);
 
 	// Additional uniform setters
 	void SetInt(std::string name, int data);
@@ -59,6 +62,9 @@ public:
 
 private:
 	void Error(std::string type);
+
+	// Vertex and fragment shader IDs
+	unsigned int mVertex, mFragment;
 
 	// Uniform and attribute maps
 	// Can access this data through GL calls but cleaner to store here

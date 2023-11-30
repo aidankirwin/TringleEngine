@@ -1,6 +1,11 @@
 #include "Shader.h"
 
-Shader::Shader(std::string vertPath, std::string fragPath)
+Shader::Shader()
+{
+
+}
+
+void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
 {
     /*
     * ---- 1. Read Shader Files ----
@@ -43,7 +48,7 @@ Shader::Shader(std::string vertPath, std::string fragPath)
     }
     catch(std::ifstream::failure& error)
     {
-        // TODO: Errors, logs, etc. should be wrapped and handled in a separate class
+        // TODO: Logs should be handled in a separate class
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << error.what() << '\n';
     }
 
@@ -55,18 +60,16 @@ Shader::Shader(std::string vertPath, std::string fragPath)
     * ---- 2. Compile Shader Code ----
     */
 
-    unsigned int vertex, fragment;
-
     // Vertex Shader
-    vertex = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex, 1, &vShaderCode, NULL);
-    glCompileShader(vertex);
+    mVertex = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(mVertex, 1, &vShaderCode, NULL);
+    glCompileShader(mVertex);
     Error("VERTEX");
 
     // Fragment Shader
-    fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment, 1, &fShaderCode, NULL);
-    glCompileShader(fragment);
+    mFragment = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(mFragment, 1, &fShaderCode, NULL);
+    glCompileShader(mFragment);
     Error("FRAGMENT");
 
     /*
@@ -74,8 +77,8 @@ Shader::Shader(std::string vertPath, std::string fragPath)
     */
 
     ID = glCreateProgram();
-    glAttachShader(ID, vertex);
-    glAttachShader(ID, fragment);
+    glAttachShader(ID, mVertex);
+    glAttachShader(ID, mFragment);
     glLinkProgram(ID);
     Error("PROGRAM");
 
@@ -121,46 +124,106 @@ Shader::Shader(std::string vertPath, std::string fragPath)
 
         std::cout << "Uniform name:" << strName << '\n' << "Uniform location:" << i << '\n';
     }
+
+    // Attributes
+    glGetProgramiv(ID, GL_ACTIVE_ATTRIBUTES, &count);
+
+    for (int i = 0; i < count; i++)
+    {
+        glGetActiveAttrib(ID, (GLuint)i, bufSize, &length, &size, &type, name);
+
+        std::string strName((char*)&name[0], length);
+        mAttribLocations.insert(std::make_pair(strName, i));
+
+        std::cout << "Attribute name:" << strName << '\n' << "Attribute location:" << i << '\n';
+    }
 }
 
 Shader Shader::Use()
 {
-
+    glUseProgram(ID);
 }
 
 void Shader::SetInt(std::string name, int data)
 {
-
+    glUniform1i(mUniformLocations[name], data);
 }
 
 void Shader::SetFloat(std::string name, float data)
 {
-
+    glUniform1f(mUniformLocations[name], data);
 }
 
-void Shader::SetMat4(std::string name, glm::mat4 data)
+void Shader::SetMat4(std::string name, glm::mat4& data)
 {
+    /*
+    * void glUniformMatrix4fv(GLint location,
+ 	*    GLsizei count,
+ 	*    GLboolean transpose,
+ 	*    const GLfloat *value);
+    * 
+    * location: uniform variable location
+    * count: number of matrices that are to be modified, 1 unless matrix is array of matrices
+    * transpose: specifies whether to transpose matrix as values are loaded in
+    * value: pointer to an array of 'count' values
+    */
 
+    glUniformMatrix4fv(mUniformLocations[name], 1, GL_FALSE, &data[0][0]);
 }
 
 
-void Shader::SetVec2(std::string name, glm::vec2 data)
+void Shader::SetVec2(std::string name, glm::vec2& data)
 {
-
+    glUniform2fv(mUniformLocations[name], 1, &data[0]);
 }
 
 
-void Shader::SetVec3(std::string name, glm::vec3 data)
+void Shader::SetVec3(std::string name, glm::vec3& data)
 {
-
+    glUniform3fv(mUniformLocations[name], 1, &data[0]);
 }
 
 void Shader::DeleteShader()
 {
-
+    glDeleteShader(mVertex);
+    glDeleteShader(mFragment);
+    glDeleteProgram(ID);
 }
 
 void Shader::Error(std::string type)
 {
+    int success;
+    char infoLog[1024];
 
+    if (type == "PROGRAM") 
+    {
+        glGetProgramiv(ID, GL_LINK_STATUS, &success);
+        if (!success) {
+            glGetProgramInfoLog(ID, 512, NULL, infoLog);
+            std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << '\n';
+            exit(-1);
+        }
+    }
+    else if(type == "FRAGMENT") 
+    {
+        glGetShaderiv(mFragment, GL_COMPILE_STATUS, &success);
+        if (!success) {
+            glGetShaderInfoLog(mFragment, 512, NULL, infoLog);
+            std::cout << "ERROR::SHADER::" << type << "::COMPILATION_FAILED\n" << infoLog << '\n';
+            exit(-1);
+        }
+    }
+    else if (type == "VERTEX")
+    {
+        glGetShaderiv(mVertex, GL_COMPILE_STATUS, &success);
+        if (!success) {
+            glGetShaderInfoLog(mVertex, 512, NULL, infoLog);
+            std::cout << "ERROR::SHADER::" << type << "::COMPILATION_FAILED\n" << infoLog << '\n';
+            exit(-1);
+        }
+    }
+    else
+    {
+        exit(-1);
+    }
 }
