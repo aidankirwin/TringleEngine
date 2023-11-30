@@ -49,13 +49,39 @@ file(GLOB_RECURSE SHADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/Tringle/assets/*.vs
 	${CMAKE_CURRENT_SOURCE_DIR}/Tringle/assets/*.fs
 	${CMAKE_CURRENT_SOURCE_DIR}/Sandbox/assets/*.vs
-	${CMAKE_CURRENT_SOURCE_DIR}/Sandbox/assets/*.fs	
+	${CMAKE_CURRENT_SOURCE_DIR}/Sandbox/assets/*.fs
 )
 file(COPY ${SHADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 message(STATUS "[LOG] Copied shaders to binary directory:")
 foreach(item ${SHADERS})
 	message(STATUS "[LOG] - ${item}")
 endforeach()
+
+# Get texture files
+# Support only jpeg for now
+file(GLOB_RECURSE TEXTURES
+	${CMAKE_CURRENT_SOURCE_DIR}/Tringle/assets/*.jpg
+	${CMAKE_CURRENT_SOURCE_DIR}/Tringle/assets/*.jpeg
+	${CMAKE_CURRENT_SOURCE_DIR}/Sandbox/assets/*.jpg
+	${CMAKE_CURRENT_SOURCE_DIR}/Sandbox/assets/*.jpeg
+)
+file(COPY ${TEXTURES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+message(STATUS "[LOG] Copied textures to binary directory:")
+foreach(item ${TEXTURES})
+	message(STATUS "[LOG] - ${item}")
+endforeach()
+
+# Get model files
+file(GLOB_RECURSE MODELS
+	${CMAKE_CURRENT_SOURCE_DIR}/Tringle/assets/*.obj
+	${CMAKE_CURRENT_SOURCE_DIR}/Sandbox/assets/*.obj
+)
+file(COPY ${MODELS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+message(STATUS "[LOG] Copied models to binary directory:")
+foreach(item ${MODELS})
+	message(STATUS "[LOG] - ${item}")
+endforeach()
+
 
 # Run cmake modules to find glfw and glm
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")

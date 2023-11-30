@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <iostream>
+#include "glad.h"
 #include "glm.hpp"
 
 class Texture
@@ -8,11 +10,14 @@ class Texture
 public:
 	Texture();
 
-	void LoadFromFiles(std::string texturePath);
+	void LoadFromFiles(std::string texturePath, bool gamma);
 	void Use();
 
-	// Texture handle
+	// Texture unit ID, 0 by default
 	unsigned int ID;
-private:
+	void SetID(unsigned int id);
 
+private:
+	// Texture handle
+	unsigned int mHandle;
 };

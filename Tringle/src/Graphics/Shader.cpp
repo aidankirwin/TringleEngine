@@ -76,10 +76,10 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
     * ---- 3. Link Shaders ----
     */
 
-    ID = glCreateProgram();
-    glAttachShader(ID, mVertex);
-    glAttachShader(ID, mFragment);
-    glLinkProgram(ID);
+    mHandle = glCreateProgram();
+    glAttachShader(mHandle, mVertex);
+    glAttachShader(mHandle, mFragment);
+    glLinkProgram(mHandle);
     Error("PROGRAM");
 
     /*
@@ -96,7 +96,7 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
     GLchar name[bufSize]; // variable name
 
     // Sets count to number of active uniforms
-    glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &count);
+    glGetProgramiv(mHandle, GL_ACTIVE_UNIFORMS, &count);
 
     for (int i = 0; i < count; i++)
     {
@@ -117,7 +117,7 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
         * type: returns data type of uniform variable
         * name: returns string containing name of variable
         */
-        glGetActiveUniform(ID, (GLuint)i, bufSize, &length, &size, &type, name);
+        glGetActiveUniform(mHandle, (GLuint)i, bufSize, &length, &size, &type, name);
         
         std::string strName((char*)&name[0], length - 1);
         mUniformLocations.insert(std::make_pair(strName, i));
@@ -126,11 +126,11 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
     }
 
     // Attributes
-    glGetProgramiv(ID, GL_ACTIVE_ATTRIBUTES, &count);
+    glGetProgramiv(mHandle, GL_ACTIVE_ATTRIBUTES, &count);
 
     for (int i = 0; i < count; i++)
     {
-        glGetActiveAttrib(ID, (GLuint)i, bufSize, &length, &size, &type, name);
+        glGetActiveAttrib(mHandle, (GLuint)i, bufSize, &length, &size, &type, name);
 
         std::string strName((char*)&name[0], length);
         mAttribLocations.insert(std::make_pair(strName, i));
@@ -141,7 +141,7 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
 
 Shader Shader::Use()
 {
-    glUseProgram(ID);
+    glUseProgram(mHandle);
 }
 
 void Shader::SetInt(std::string name, int data)
@@ -187,7 +187,7 @@ void Shader::DeleteShader()
 {
     glDeleteShader(mVertex);
     glDeleteShader(mFragment);
-    glDeleteProgram(ID);
+    glDeleteProgram(mHandle);
 }
 
 void Shader::Error(std::string type)
@@ -197,9 +197,9 @@ void Shader::Error(std::string type)
 
     if (type == "PROGRAM") 
     {
-        glGetProgramiv(ID, GL_LINK_STATUS, &success);
+        glGetProgramiv(mHandle, GL_LINK_STATUS, &success);
         if (!success) {
-            glGetProgramInfoLog(ID, 512, NULL, infoLog);
+            glGetProgramInfoLog(mHandle, 512, NULL, infoLog);
             std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << '\n';
             exit(-1);
         }

@@ -56,11 +56,11 @@ public:
 	void SetFloat(std::string name, float data);
 
 	void DeleteShader();
-
-	// Shader handle
-	unsigned int ID;
-
 private:
+	// Shader handle
+	unsigned int mHandle;
+
+	// Error handling
 	void Error(std::string type);
 
 	// Vertex and fragment shader IDs
