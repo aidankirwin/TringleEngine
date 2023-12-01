@@ -56,7 +56,7 @@ private:
 	const glm::vec3 POSITION = glm::vec3(0.0f, 0.0f, 0.0f);
 	const glm::vec3 UP = glm::vec3(0.0f, 1.0f, 0.0f);
 	const glm::vec3 WORLDUP = glm::vec3(0.0f, 1.0f, 0.0f);
-	const float YAW = -90.0f;
+	const float YAW = 90.0f;
 	const float PITCH = 0.0f;
 	const Projection VIEW = Projection::PERSPECTIVE;
 

@@ -46,10 +46,10 @@ endforeach()
 
 # Get shader files
 file(GLOB_RECURSE SHADERS
-	${CMAKE_CURRENT_SOURCE_DIR}/Tringle/assets/*.vs
-	${CMAKE_CURRENT_SOURCE_DIR}/Tringle/assets/*.fs
-	${CMAKE_CURRENT_SOURCE_DIR}/Sandbox/assets/*.vs
-	${CMAKE_CURRENT_SOURCE_DIR}/Sandbox/assets/*.fs
+	${CMAKE_CURRENT_SOURCE_DIR}/Tringle/assets/*.vert
+	${CMAKE_CURRENT_SOURCE_DIR}/Tringle/assets/*.frag
+	${CMAKE_CURRENT_SOURCE_DIR}/Sandbox/assets/*.vert
+	${CMAKE_CURRENT_SOURCE_DIR}/Sandbox/assets/*.frag
 )
 file(COPY ${SHADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 message(STATUS "[LOG] Copied shaders to binary directory:")

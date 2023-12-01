@@ -10,7 +10,7 @@ class Texture
 public:
 	Texture();
 
-	void LoadFromFiles(std::string texturePath, bool gamma);
+	void LoadFromFiles(std::string texturePath);
 	void Use();
 
 	// Texture unit ID, 0 by default

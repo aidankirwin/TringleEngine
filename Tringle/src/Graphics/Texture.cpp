@@ -7,7 +7,7 @@ Texture::Texture() : ID(0)
 {
 }
 
-void Texture::LoadFromFiles(std::string texturePath, bool gamma)
+void Texture::LoadFromFiles(std::string texturePath)
 {
 	// stbi loads images with y=0.0 at the top but OpenGL
 	// expects it to be the bottom
@@ -46,8 +46,8 @@ void Texture::LoadFromFiles(std::string texturePath, bool gamma)
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	stbi_image_free(data);
 }

@@ -98,6 +98,8 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
     // Sets count to number of active uniforms
     glGetProgramiv(mHandle, GL_ACTIVE_UNIFORMS, &count);
 
+    std::cout << count << '\n';
+
     for (int i = 0; i < count; i++)
     {
         /*
@@ -119,7 +121,7 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
         */
         glGetActiveUniform(mHandle, (GLuint)i, bufSize, &length, &size, &type, name);
         
-        std::string strName((char*)&name[0], length - 1);
+        std::string strName(name, length);
         mUniformLocations.insert(std::make_pair(strName, i));
 
         std::cout << "Uniform name:" << strName << '\n' << "Uniform location:" << i << '\n';
@@ -128,11 +130,13 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
     // Attributes
     glGetProgramiv(mHandle, GL_ACTIVE_ATTRIBUTES, &count);
 
+    std::cout << count << '\n';
+
     for (int i = 0; i < count; i++)
     {
         glGetActiveAttrib(mHandle, (GLuint)i, bufSize, &length, &size, &type, name);
 
-        std::string strName((char*)&name[0], length);
+        std::string strName(name, length);
         mAttribLocations.insert(std::make_pair(strName, i));
 
         std::cout << "Attribute name:" << strName << '\n' << "Attribute location:" << i << '\n';

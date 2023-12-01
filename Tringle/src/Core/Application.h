@@ -7,6 +7,7 @@
 #include "TimeManager.h"
 #include "Singleton.h"
 #include "EventManager.h"
+#include "Camera.h"
 
 namespace Tringle
 {

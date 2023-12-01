@@ -1,12 +1,17 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include "glm.hpp"
+#include "Shader.h"
+#include "gtc/matrix_transform.hpp"
+
+// temp
+#include "ext.hpp"
 
 struct Vertex
 {
     glm::vec3 Position;
-    glm::vec4 Color;
     glm::vec2 TexCoord;
 };
 
@@ -15,9 +20,16 @@ struct Transform
 
 };
 
-struct Mesh
+class Mesh
 {
-    std::vector<Vertex> Vertices;
-    std::vector<unsigned int> Indices;
-    unsigned int VAO, VBO, EBO;
+public:
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
+    void Initialize();
+    void Draw(Shader shader);
+private:
+    std::vector<Vertex> mVertices;
+    std::vector<unsigned int> mIndices;
+    unsigned int mVAO, mVBO, mEBO;
+
+    void ExitOnGLError();
 };
