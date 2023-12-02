@@ -192,28 +192,11 @@ void Shader::LoadFromFiles(const std::string& vertPath, const std::string& fragP
 
         std::cout << "Attribute name:" << strName << '\n' << "Attribute location:" << i << '\n';
     }
-
-    // Should remove the following lines. Just for testing
-    glUseProgram(mHandle);
-
-    GLint params;
-
-    glGetProgramiv(mHandle, GL_LINK_STATUS, &params);
-    std::cout << "GetProgramiv:" << params << '\n';
-
-    glGetProgramInfoLog(mHandle, 1000, &infoLength, text);
-    if(infoLength > 0)
-    {
-        std::cout << "Shader" << '\n' << text << '\n';
-    }
 }
 
 void Shader::Use()
 {
     glUseProgram(mHandle);
-    // GLint params = 999999999;
-    // glGetProgramiv(mHandle, GL_LINK_STATUS, &params);
-    // std::cout << "SHADER::USE TEST. GetProgramiv:" << params << '\n';
 }
 
 void Shader::SetInt(std::string name, int data)

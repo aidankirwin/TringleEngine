@@ -26,10 +26,11 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
     void Initialize();
     void Draw();
+    unsigned int VAO;
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
 private:
-    std::vector<Vertex> mVertices;
-    std::vector<unsigned int> mIndices;
-    unsigned int mVAO, mVBO, mEBO;
+    unsigned int mVBO, mEBO;
 
     void ExitOnGLError();
 };

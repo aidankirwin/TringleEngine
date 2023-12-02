@@ -32,7 +32,7 @@ namespace Tringle
         std::cout << "test: " << BIN_PATH << '\n';
         mShader->LoadFromFiles(BIN_PATH + "default.vert", BIN_PATH + "default.frag");
 
-        // Make sure tp ca;; shader.Use before doing this
+        // Make sure to call shader.Use before doing this
         //shaderTest.SetMat4("view", view);
         //shaderTest.SetMat4("projection", proj);
 
@@ -63,11 +63,10 @@ namespace Tringle
             
             Update();                           // User defined app update
             
-            // Access violation
             mShader->Use();
 
             // mRenderManager.Update();            // Update active renderables
-            // meshTest.Draw();
+            meshTest.Draw();
 
             // More window handling
             mWindow->SwapBuffersAndPollEvents();             // Swap buffers

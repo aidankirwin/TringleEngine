@@ -1,59 +1,31 @@
 #include "Mesh.h"
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices) :
-    mVertices(vertices), mIndices(indices)
+    vertices(vertices), indices(indices)
 {
 
 }
 
 void Mesh::Initialize()
 {
-    // TODO: something is wrong with how VAO setup happens here,
-   // Get an access violation when trying to bind to VAO in draw call
-   // Update: see ExitOnGLError()
-
     std::cout << glGetString(GL_VERSION) << '\n';
-    std::cout << "VAO:" << mVAO << '\n';
-    std::cout << "VAO address:" << &(mVAO) << '\n';
 
-    glGenVertexArrays(1, &(mVAO));
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
 
-    // ExitOnGLError();
-
-    std::cout << "VAO:" << mVAO << '\n';
-    std::cout << "VAO address:" << &mVAO << '\n';
-
-    // Returns error 1282
-    // GL_INVALID_OPERATION
-    // Something is wrong with VAO generation
-    // Update: wtf if we run this before glGenVertexArrays() I get same error
-    // // Fixed: something is wrong with shader uniform setters
-    // ExitOnGLError();
-
-    glBindVertexArray(mVAO);
-
-    for (int i = 0; i < (mVertices).size(); i++)
+    for (int i = 0; i < (vertices).size(); i++)
     {
-        std::cout << glm::to_string((mVertices)[i].Position) << '\n';
-        std::cout << glm::to_string((mVertices)[i].TexCoord) << '\n';
+        std::cout << glm::to_string((vertices)[i].Position) << '\n';
+        std::cout << glm::to_string((vertices)[i].TexCoord) << '\n';
     }
-
-    std::cout << "VAO:" << mVAO << '\n';
-    std::cout << "VAO address:" << &(mVAO) << '\n';
 
     glGenBuffers(1, &mVBO);
     glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-    glBufferData(GL_ARRAY_BUFFER, (mVertices).size() * sizeof(Vertex), &mVertices[0], GL_STATIC_DRAW);
-
-    std::cout << "Vertices size:" << (mVertices).size() * sizeof(Vertex) << '\n';
+    glBufferData(GL_ARRAY_BUFFER, (vertices).size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
     glGenBuffers(1, &mEBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndices.size() * sizeof(unsigned int), &mIndices[0], GL_STATIC_DRAW);
-    ExitOnGLError();
-
-    std::cout << "Indices size:" << mIndices.size() * sizeof(unsigned int) << '\n';
-    std::cout << "Indices memory address:" << &(mIndices[0]) << '\n';
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
     // set the vertex attribute pointers
     // vertex Positions
@@ -61,13 +33,9 @@ void Mesh::Initialize()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     // vertex texture coords
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoord));
-
-    std::cout << "TexCoord offset:" << (void*)offsetof(Vertex, TexCoord) << '\n';
-    std::cout << "3 float offset:" << (void*)(3 * sizeof(float)) << '\n';
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoord));
 
     ExitOnGLError();
-
     glBindVertexArray(0);
 }
 
@@ -96,16 +64,12 @@ void Mesh::Draw()
 
     //texture.Use();
 
-    glBindVertexArray(mVAO);
+    glBindVertexArray(VAO);
     ExitOnGLError();
 
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // Access violation
+    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
 
-   /* glBindVertexArray(mesh->VAO);
-    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>((mesh->Indices).size()), GL_UNSIGNED_INT, 0);
-
-    glBindVertexArray(0);
-    glActiveTexture(0);*/
+    // glActiveTexture(0);
     glBindVertexArray(0);
 }
 
@@ -114,6 +78,6 @@ void Mesh::ExitOnGLError()
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
         std::cout << err;
-        exit(-1);
+        //exit(-1);
     }
 }
