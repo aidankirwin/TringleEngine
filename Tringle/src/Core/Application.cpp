@@ -44,9 +44,9 @@ namespace Tringle
         std::vector<Vertex> vert = { v1, v2, v3, v4 };
         std::vector<unsigned int> indices = { 0,  1,  3,  3,  1,  2 };
 
-        //Texture texTest;
-        //texTest.LoadFromFiles("tex.jpg");
-        //shaderTest.SetInt("sprite", 0);
+        Texture texTest;
+        texTest.LoadFromFiles(BIN_PATH + "tex.jpg");
+        mShader->SetInt("tex1", 0);
 
         Mesh meshTest(vert, indices);
 
@@ -64,7 +64,7 @@ namespace Tringle
             Update();                           // User defined app update
             
             mShader->Use();
-
+            texTest.Use();
             // mRenderManager.Update();            // Update active renderables
             meshTest.Draw();
 
