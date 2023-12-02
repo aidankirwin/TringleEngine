@@ -28,9 +28,11 @@ namespace Tringle
         glm::mat4 proj = camTest.GetProjectionMatrix();
         glm::mat4 view = camTest.GetViewMatrix();
 
-        Shader shaderTest;
-        shaderTest.LoadFromFiles("default.vert", "default.frag");
+        mShader = new Shader();
+        std::cout << "test: " << BIN_PATH << '\n';
+        mShader->LoadFromFiles(BIN_PATH + "default.vert", BIN_PATH + "default.frag");
 
+        // Make sure tp ca;; shader.Use before doing this
         //shaderTest.SetMat4("view", view);
         //shaderTest.SetMat4("projection", proj);
 
@@ -61,8 +63,11 @@ namespace Tringle
             
             Update();                           // User defined app update
             
-            mRenderManager.Update();            // Update active renderables
-            meshTest.Draw(shaderTest);
+            // Access violation
+            mShader->Use();
+
+            // mRenderManager.Update();            // Update active renderables
+            // meshTest.Draw();
 
             // More window handling
             mWindow->SwapBuffersAndPollEvents();             // Swap buffers

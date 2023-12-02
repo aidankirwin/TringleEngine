@@ -16,13 +16,13 @@ public:
 	Shader();
 
 	// Creates a shader program given a vertex and fragment shader file
-	void LoadFromFiles(std::string vertPath, std::string fragPath);
+	void LoadFromFiles(const std::string& vertPath, const std::string& fragPath);
 
 	/*
 	* Makes this shader the active shader in the app
 	* Returns this shader object
 	*/
-	Shader Use();
+	void Use();
 
 	// Uniform and attribute functions
 
@@ -56,9 +56,10 @@ public:
 	void SetFloat(std::string name, float data);
 
 	void DeleteShader();
-private:
+
 	// Shader handle
 	unsigned int mHandle;
+private:
 
 	// Error handling
 	void Error(std::string type);

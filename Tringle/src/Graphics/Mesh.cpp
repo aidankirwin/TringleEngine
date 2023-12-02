@@ -71,13 +71,16 @@ void Mesh::Initialize()
     glBindVertexArray(0);
 }
 
-void Mesh::Draw(Shader shader)
+// For later, when passing shaders, pass &shader
+// Can't work with a copy of our shader object
+void Mesh::Draw()
 {
     /*
     * Note for later:
     * Must call shader.SetInt("textureUniformName", texture.ID) before using texture
     * Need to test / research whether it is okay to call this before glActiveTexture()
     */
+    // shader.Use();
 
     glm::mat4 model(1.0f);
     glm::vec3 pos = glm::vec3(0.0f, 0.0f, 5.0f);
@@ -88,8 +91,8 @@ void Mesh::Draw(Shader shader)
 
     // shader.SetMat4("model", model);
 
-    std::cout << mVAO << '\n';
-    std::cout << &(mVAO) << '\n';
+    // std::cout << mVAO << '\n';
+    // std::cout << &(mVAO) << '\n';
 
     //texture.Use();
 
@@ -103,6 +106,7 @@ void Mesh::Draw(Shader shader)
 
     glBindVertexArray(0);
     glActiveTexture(0);*/
+    glBindVertexArray(0);
 }
 
 void Mesh::ExitOnGLError()

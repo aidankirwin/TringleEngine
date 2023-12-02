@@ -1,56 +1,92 @@
 #include "Shader.h"
 
+#include <unistd.h>
+
 Shader::Shader()
 {
 
 }
 
-void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
+void Shader::LoadFromFiles(const std::string& vertPath, const std::string& fragPath)
 {
     /*
     * ---- 1. Read Shader Files ----
     * Inputs:
-    *   (a) vertPath: string path of vertex shader
-    *   (b) fragPath: string path of fragment shader
+    *   (a) vertPath: path of vertex shader
+    *   (b) fragPath: path of fragment shader
     * Outputs:
     *   (a) vShaderCode: const char of vertex shader code
     *   (b) fShaderCode: const char of fragment shader code
     */
 
     std::string vertCode, fragCode;
-    std::ifstream vShaderFile, fShaderFile;
-
-    // Convert file paths from string to const char
-    const char* vertPathChar = vertPath.c_str();
-    const char* fragPathChar = fragPath.c_str();
-
-    vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-
-    try
+    
+    // Test code, print working directory
+    // Note that paths are relative to the working directory
+    // Not the binary directory (where the executable is stored)
+    char buffer[256];
+    char* val = getcwd(buffer, sizeof(buffer));
+    if(val)
     {
-        // Open the files
-        vShaderFile.open(vertPathChar);
-        fShaderFile.open(fragPathChar);
-
-        // Read file
-        std::stringstream vShaderStream, fShaderStream;
-        vShaderStream << vShaderFile.rdbuf();
-        fShaderStream << fShaderFile.rdbuf();
-
-        // Close the files
-        vShaderFile.close();
-        fShaderFile.close();
-
-        // Convert stream to string
-        vertCode = vShaderStream.str();
-        fragCode = fShaderStream.str();
+        std::cout << buffer << '\n';
     }
-    catch(std::ifstream::failure& error)
+
+    // There is a cleaner way to read file, but took this while testing
+    // If results are better we can keep using this, but should wrap in a func
+    std::ifstream vIn(vertPath, std::ios::in | std::ios::binary);
+
+    if(vIn)
     {
-        // TODO: Logs should be handled in a separate class
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << error.what() << '\n';
+        vIn.seekg(0, std::ios::end);
+        size_t size = vIn.tellg();
+        if(size != -1)
+        {
+            vertCode.resize(size);
+            vIn.seekg(0, std::ios::beg);
+            vIn.read(&vertCode[0], size);
+        }
+        else
+        {
+            std::cout << "Could not read from file:" << vertPath << '\n';
+            exit(-1);
+        }
     }
+    else
+    {
+        std::cout << "Could not open file:" << vertPath << '\n';
+        exit(-1);
+    }
+
+    std::ifstream fIn(fragPath, std::ios::in | std::ios::binary);
+
+    if(fIn)
+    {
+        fIn.seekg(0, std::ios::end);
+        size_t size = fIn.tellg();
+        if(size != -1)
+        {
+            fragCode.resize(size);
+            fIn.seekg(0, std::ios::beg);
+            fIn.read(&fragCode[0], size);
+        }
+        else
+        {
+            std::cout << "Could not read from file:" << fragPath << '\n';
+            exit(-1);
+        }
+    }
+    else
+    {
+        std::cout << "Could not open file:" << fragPath << '\n';
+        exit(-1);
+    }
+
+    std::cout << vertPath << '\n';
+    std::cout << "vertex code: " << vertCode << '\n';
+
+    std::cout << fragPath << '\n';
+    std::cout << "frag code: " << fragCode << '\n';
+
 
     // Convert content string to const char
     const char* vShaderCode = vertCode.c_str();
@@ -81,6 +117,21 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
     glAttachShader(mHandle, mFragment);
     glLinkProgram(mHandle);
     Error("PROGRAM");
+
+    int infoLength;
+    char text[1000];
+    glGetProgramInfoLog(mHandle, 1000, &infoLength, text);
+
+    // Can delete these once their linked
+    // Note that these vars are used in Shader::Error()
+    // Might want to clean that up. No risk of memory leak just bad code
+    glDeleteShader(mVertex);
+    glDeleteShader(mFragment);
+
+    if(infoLength > 0)
+    {
+        std::cout << "Shader" << '\n' << text << '\n';
+    }
 
     /*
     * ---- 4. Fill Uniform and Attribute Maps ----
@@ -141,11 +192,28 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
 
         std::cout << "Attribute name:" << strName << '\n' << "Attribute location:" << i << '\n';
     }
+
+    // Should remove the following lines. Just for testing
+    glUseProgram(mHandle);
+
+    GLint params;
+
+    glGetProgramiv(mHandle, GL_LINK_STATUS, &params);
+    std::cout << "GetProgramiv:" << params << '\n';
+
+    glGetProgramInfoLog(mHandle, 1000, &infoLength, text);
+    if(infoLength > 0)
+    {
+        std::cout << "Shader" << '\n' << text << '\n';
+    }
 }
 
-Shader Shader::Use()
+void Shader::Use()
 {
     glUseProgram(mHandle);
+    // GLint params = 999999999;
+    // glGetProgramiv(mHandle, GL_LINK_STATUS, &params);
+    // std::cout << "SHADER::USE TEST. GetProgramiv:" << params << '\n';
 }
 
 void Shader::SetInt(std::string name, int data)
@@ -189,8 +257,6 @@ void Shader::SetVec3(std::string name, glm::vec3& data)
 
 void Shader::DeleteShader()
 {
-    glDeleteShader(mVertex);
-    glDeleteShader(mFragment);
     glDeleteProgram(mHandle);
 }
 

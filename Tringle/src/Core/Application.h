@@ -38,8 +38,38 @@ namespace Tringle
             mRunning = false;
         }
 
+        // Bin directory path variable
+        // Only had path issues when testing on mac
+        // But nice to have
+        std::string BIN_PATH;
+        void SetPath(char *argv[])
+        {
+            std::string path;
+            size_t end;
+
+            // Get path
+            for(int i = 0; argv[i] !=0; i++)
+            {
+                path += argv[i];
+            }
+
+            // Remove program name
+            end = path.rfind("/");
+            if(end != std::string::npos)
+            {
+                path.replace(end, 100, "/");
+            }
+
+            // Print for testing
+            // Should start storing print calls somewhere
+            std::cout << path << '\n';
+
+            BIN_PATH = path;
+        }
+
     private:
         Window* mWindow;
+        Shader* mShader;
 
         // Subsystem manager singletons
         RenderManager mRenderManager;

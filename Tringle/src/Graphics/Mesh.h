@@ -25,7 +25,7 @@ class Mesh
 public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
     void Initialize();
-    void Draw(Shader shader);
+    void Draw();
 private:
     std::vector<Vertex> mVertices;
     std::vector<unsigned int> mIndices;
