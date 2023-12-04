@@ -16,7 +16,7 @@ public:
 	Shader();
 
 	// Creates a shader program given a vertex and fragment shader file
-	void LoadFromFiles(const std::string& vertPath, const std::string& fragPath);
+	void Create(const std::string& vertPath, const std::string& fragPath);
 
 	/*
 	* Makes this shader the active shader in the app
@@ -63,6 +63,7 @@ private:
 
 	// Error handling
 	void Error(std::string type);
+	std::string LoadFile(const std::string& filePath);
 
 	// Vertex and fragment shader IDs
 	unsigned int mVertex, mFragment;

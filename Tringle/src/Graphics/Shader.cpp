@@ -7,7 +7,7 @@ Shader::Shader()
 
 }
 
-void Shader::LoadFromFiles(const std::string& vertPath, const std::string& fragPath)
+void Shader::Create(const std::string& vertPath, const std::string& fragPath)
 {
     /*
     * ---- 1. Read Shader Files ----
@@ -31,56 +31,11 @@ void Shader::LoadFromFiles(const std::string& vertPath, const std::string& fragP
         std::cout << buffer << '\n';
     }
 
-    // There is a cleaner way to read file, but took this while testing
-    // If results are better we can keep using this, but should wrap in a func
-    std::ifstream vIn(vertPath, std::ios::in | std::ios::binary);
+    vertCode = LoadFile(vertPath);
+    fragCode = LoadFile(fragPath);
+    // TODO: add optional geometry shader setup
 
-    if(vIn)
-    {
-        vIn.seekg(0, std::ios::end);
-        size_t size = vIn.tellg();
-        if(size != -1)
-        {
-            vertCode.resize(size);
-            vIn.seekg(0, std::ios::beg);
-            vIn.read(&vertCode[0], size);
-        }
-        else
-        {
-            std::cout << "Could not read from file:" << vertPath << '\n';
-            exit(-1);
-        }
-    }
-    else
-    {
-        std::cout << "Could not open file:" << vertPath << '\n';
-        exit(-1);
-    }
-
-    std::ifstream fIn(fragPath, std::ios::in | std::ios::binary);
-
-    if(fIn)
-    {
-        fIn.seekg(0, std::ios::end);
-        size_t size = fIn.tellg();
-        if(size != -1)
-        {
-            fragCode.resize(size);
-            fIn.seekg(0, std::ios::beg);
-            fIn.read(&fragCode[0], size);
-        }
-        else
-        {
-            std::cout << "Could not read from file:" << fragPath << '\n';
-            exit(-1);
-        }
-    }
-    else
-    {
-        std::cout << "Could not open file:" << fragPath << '\n';
-        exit(-1);
-    }
-
+    // Test code, output shader code
     std::cout << vertPath << '\n';
     std::cout << "vertex code: " << vertCode << '\n';
 
@@ -279,4 +234,34 @@ void Shader::Error(std::string type)
     {
         exit(-1);
     }
+}
+
+std::string Shader::LoadFile(const std::string& filePath)
+{
+    std::string result;
+    std::ifstream in(filePath, std::ios::in | std::ios::binary);
+
+    if(in)
+    {
+        in.seekg(0, std::ios::end);
+        size_t size = in.tellg();
+        if(size != -1)
+        {
+            result.resize(size);
+            in.seekg(0, std::ios::beg);
+            in.read(&result[0], size);
+        }
+        else
+        {
+            std::cout << "Could not read from file:" << filePath << '\n';
+            exit(-1);
+        }
+    }
+    else
+    {
+        std::cout << "Could not open file:" << filePath << '\n';
+        exit(-1);
+    }
+
+    return result;
 }

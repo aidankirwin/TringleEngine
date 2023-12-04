@@ -28,13 +28,13 @@ namespace Tringle
         glm::mat4 proj = camTest.GetProjectionMatrix();
         glm::mat4 view = camTest.GetViewMatrix();
 
-        mShader = new Shader();
+        Shader shader;
         std::cout << "test: " << BIN_PATH << '\n';
-        mShader->LoadFromFiles(BIN_PATH + "default.vert", BIN_PATH + "default.frag");
+        shader.Create(BIN_PATH + "default.vert", BIN_PATH + "default.frag");
 
         // Make sure to call shader.Use before doing this
-        //shaderTest.SetMat4("view", view);
-        //shaderTest.SetMat4("projection", proj);
+        shader.SetMat4("view", view);
+        shader.SetMat4("projection", proj);
 
         Vertex v1 = { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) };
         Vertex v2 = { glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f) };
@@ -46,7 +46,7 @@ namespace Tringle
 
         Texture texTest;
         texTest.LoadFromFiles(BIN_PATH + "tex.jpg");
-        mShader->SetInt("tex1", 0);
+        shader.SetInt("tex1", 0);
 
         Mesh meshTest(vert, indices);
 
@@ -63,10 +63,10 @@ namespace Tringle
             
             Update();                           // User defined app update
             
-            mShader->Use();
+            shader.Use();
             texTest.Use();
             // mRenderManager.Update();            // Update active renderables
-            meshTest.Draw();
+            meshTest.Draw(shader);
 
             // More window handling
             mWindow->SwapBuffersAndPollEvents();             // Swap buffers

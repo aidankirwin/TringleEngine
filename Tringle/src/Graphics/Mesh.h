@@ -17,7 +17,9 @@ struct Vertex
 
 struct Transform
 {
-
+    glm::vec3 Position;
+    glm::vec3 Scale;
+    
 };
 
 class Mesh
@@ -25,7 +27,7 @@ class Mesh
 public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
     void Initialize();
-    void Draw();
+    void Draw(Shader& shader);
     unsigned int VAO;
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;

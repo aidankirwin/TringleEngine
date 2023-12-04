@@ -69,7 +69,6 @@ namespace Tringle
 
     private:
         Window* mWindow;
-        Shader* mShader;
 
         // Subsystem manager singletons
         RenderManager mRenderManager;

@@ -41,7 +41,7 @@ void Mesh::Initialize()
 
 // For later, when passing shaders, pass &shader
 // Can't work with a copy of our shader object
-void Mesh::Draw()
+void Mesh::Draw(Shader& shader, Texture& texture, Transform transform)
 {
     /*
     * Note for later:
@@ -57,7 +57,7 @@ void Mesh::Draw()
     model = glm::scale(model, scale);
     model = glm::translate(model, pos);
 
-    // shader.SetMat4("model", model);
+    shader.SetMat4("model", model);
 
     // std::cout << mVAO << '\n';
     // std::cout << &(mVAO) << '\n';
