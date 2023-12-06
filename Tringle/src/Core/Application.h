@@ -54,11 +54,22 @@ namespace Tringle
             }
 
             // Remove program name
-            end = path.rfind("/");
+            // Slash direction is OS dependent
+            #ifdef _WIN32
+            end = path.rfind("\\");
             if(end != std::string::npos)
+            {
+                path.replace(end, 100, "\\");
+            }
+            #endif
+
+            #ifdef __APPLE__
+            end = path.rfind("/");
+            if (end != std::string::npos)
             {
                 path.replace(end, 100, "/");
             }
+            #endif
 
             // Print for testing
             // Should start storing print calls somewhere

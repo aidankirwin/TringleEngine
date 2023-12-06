@@ -46,12 +46,12 @@ public:
 	*	(b) layout(location = 1) in vec2 uv
 	*/
 
-	// Required default uniform setters
+	// Uniform setters
+	// Must call Shader::Use() before calling these
 	void SetMat4(std::string name, glm::mat4& data);
 	void SetVec2(std::string name, glm::vec2& data);
 	void SetVec3(std::string name, glm::vec3& data);
 
-	// Additional uniform setters
 	void SetInt(std::string name, int data);
 	void SetFloat(std::string name, float data);
 
@@ -73,22 +73,3 @@ private:
 	std::map<std::string, int> mUniformLocations;
 	std::map<std::string, int> mAttribLocations;
 };
-
-/*
----- Default Vertex Shader ----
-#version 330 core
-layout (location = 0) in vec3 aPos;         // model coords of a vertex
-layout (location = 1) in vec2 aTexCoord;    // uv coords of corresponding texture
-
-out vec2 TexCoord;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-void main()
-{
-    gl_Position = projection * view * model * vec4(aPos, 1.0f);
-	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
-}
-*/

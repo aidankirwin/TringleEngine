@@ -12,7 +12,7 @@ namespace Tringle
         mTimeManager = Singleton<TimeManager>::GetInstance();
         mRenderManager = Singleton<RenderManager>::GetInstance();
 
-        StartUp();                              // User defined app start up
+        StartUp();                                  // User defined app start up
 
         // Start up engine systems in the correct order
         // Create window
@@ -31,22 +31,25 @@ namespace Tringle
         Shader shader;
         std::cout << "test: " << BIN_PATH << '\n';
         shader.Create(BIN_PATH + "default.vert", BIN_PATH + "default.frag");
+        shader.Use();
 
         // Make sure to call shader.Use before doing this
         shader.SetMat4("view", view);
         shader.SetMat4("projection", proj);
 
-        Vertex v1 = { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) };
-        Vertex v2 = { glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f) };
-        Vertex v3 = { glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f) };
-        Vertex v4 = { glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) };
+                      // Position data             // Texture data
+        Vertex v1 = { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) }; // 0
+        Vertex v2 = { glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f) }; // 1
+        Vertex v3 = { glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) }; // 2
+        Vertex v4 = { glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) }; // 3
 
         std::vector<Vertex> vert = { v1, v2, v3, v4 };
         std::vector<unsigned int> indices = { 0,  1,  3,  3,  1,  2 };
 
         Texture texTest;
+        Transform test;
         texTest.LoadFromFiles(BIN_PATH + "tex.jpg");
-        shader.SetInt("tex1", 0);
+        shader.SetInt("tex1", texTest.ID);
 
         Mesh meshTest(vert, indices);
 
@@ -56,26 +59,26 @@ namespace Tringle
         while (mRunning)
         {
             // Window handling
-            mWindow->StartRender();               // Clear
+            mWindow->StartRender();                 // Clear
 
             // Update engine systems in order
-            mTimeManager.Update();              // Update active timers
+            mTimeManager.Update();
             
-            Update();                           // User defined app update
+            Update();                               // User defined app update
             
             shader.Use();
             texTest.Use();
-            // mRenderManager.Update();            // Update active renderables
-            meshTest.Draw(shader);
+            // mRenderManager.Update();
+            meshTest.Draw(shader, texTest, test);
 
             // More window handling
-            mWindow->SwapBuffersAndPollEvents();             // Swap buffers
+            mWindow->SwapBuffersAndPollEvents();    // Swap buffers
         }
 
         // Close window
         mWindow->ShutDown();
 
-        ShutDown();                             // User defined app shut down
+        ShutDown();                                 // User defined app shut down
 
         // Shut down engine systems in the reverse order
         mRenderManager.ShutDown();

@@ -18,4 +18,5 @@ public:
 private:
 	float mDeltaTime;
 	float mLastFrame;
+	bool mRunning;
 };

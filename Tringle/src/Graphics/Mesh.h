@@ -4,6 +4,7 @@
 #include <string>
 #include "glm.hpp"
 #include "Shader.h"
+#include "Texture.h"
 #include "gtc/matrix_transform.hpp"
 
 // temp
@@ -11,8 +12,8 @@
 
 struct Vertex
 {
-    glm::vec3 Position;
-    glm::vec2 TexCoord;
+    glm::vec3 Position;     // 12 bytes
+    glm::vec2 TexCoord;     // 8 bytes
 };
 
 struct Transform
@@ -27,7 +28,7 @@ class Mesh
 public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
     void Initialize();
-    void Draw(Shader& shader);
+    void Draw(Shader& shader, Texture& texture, Transform transform);
     unsigned int VAO;
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;

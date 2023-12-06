@@ -1,6 +1,6 @@
 #include "Timer.h"
 
-Timer::Timer()
+Timer::Timer() : mDeltaTime(0), mLastFrame(0), mRunning(true)
 {
 }
 
@@ -10,12 +10,12 @@ Timer::~Timer()
 
 void Timer::Start()
 {
-	mDeltaTime = 0;
 	mLastFrame = static_cast<float>(glfwGetTime());
 }
 
 void Timer::Update()
 {
+	if (!mRunning) return;
 	float currentFrame = static_cast<float>(glfwGetTime());
 	mDeltaTime = currentFrame - mLastFrame;
 	mLastFrame = currentFrame;
@@ -23,10 +23,10 @@ void Timer::Update()
 
 void Timer::Stop()
 {
-
+	mRunning = false;
 }
 
 float Timer::GetDelta()
 {
-
+	return mDeltaTime;
 }
