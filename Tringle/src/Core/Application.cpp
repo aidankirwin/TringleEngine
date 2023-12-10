@@ -7,6 +7,9 @@ namespace Tringle
 
     void Application::Run()
     {
+        Log::DebugMsg("Path to bin dir: " + BIN_PATH);
+        Log::DebugMsg("======= START UP =======");
+
         // Get manager singletons
         mSceneManager = Singleton<SceneManager>::GetInstance(); // TODO
         mTimeManager = Singleton<TimeManager>::GetInstance();
@@ -28,32 +31,47 @@ namespace Tringle
         glm::mat4 proj = camTest.GetProjectionMatrix();
         glm::mat4 view = camTest.GetViewMatrix();
 
+        Log::DebugMsg("Create shader");
         Shader shader;
-        std::cout << "test: " << BIN_PATH << '\n';
         shader.Create(BIN_PATH + "default.vert", BIN_PATH + "default.frag");
+        Error::GLError();
+        Log::DebugMsg("Use shader");
         shader.Use();
+        Error::GLError();
 
-        // Make sure to call shader.Use before doing this
+        Log::DebugMsg("Set view and projection matrix uniforms");
         shader.SetMat4("view", view);
         shader.SetMat4("projection", proj);
+        Error::GLError();
 
                       // Position data             // Texture data
         Vertex v1 = { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) }; // 0
         Vertex v2 = { glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f) }; // 1
-        Vertex v3 = { glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) }; // 2
+        Vertex v3 = { glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f) }; // 2
         Vertex v4 = { glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) }; // 3
 
         std::vector<Vertex> vert = { v1, v2, v3, v4 };
         std::vector<unsigned int> indices = { 0,  1,  3,  3,  1,  2 };
 
+        Log::DebugMsg("Load texture");
         Texture texTest;
+        texTest.Create(BIN_PATH + "tex.jpg");
+        Error::GLError();
+
         Transform test;
-        texTest.LoadFromFiles(BIN_PATH + "tex.jpg");
-        shader.SetInt("tex1", texTest.ID);
+        glm::vec3 pos = glm::vec3(0.0f, 0.0f, -20.0f);
+        glm::vec3 scale = glm::vec3(5, 5, 1);
+        float angle = 0.0f;
+        glm::vec3 axis = glm::vec3(0, 0, 1);
+        test.Position = pos;
+        test.Scale = scale;
+        test.Rotation = { axis, angle };
 
         Mesh meshTest(vert, indices);
 
         meshTest.Initialize();
+
+        Log::DebugMsg("======= UPDATE BEGIN =======");
 
         // Main game loop.
         while (mRunning)

@@ -3,9 +3,9 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
+
+#include "Log.h"
+#include "Resources.h"
 
 #include "glm.hpp"
 #include "glad.h"
@@ -60,11 +60,6 @@ public:
 	// Shader handle
 	unsigned int mHandle;
 private:
-
-	// Error handling
-	void Error(std::string type);
-	std::string LoadFile(const std::string& filePath);
-
 	// Vertex and fragment shader IDs
 	unsigned int mVertex, mFragment;
 

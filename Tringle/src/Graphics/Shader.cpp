@@ -1,7 +1,5 @@
 #include "Shader.h"
 
-#include <unistd.h>
-
 Shader::Shader()
 {
 
@@ -20,27 +18,17 @@ void Shader::Create(const std::string& vertPath, const std::string& fragPath)
     */
 
     std::string vertCode, fragCode;
-    
-    // Test code, print working directory
-    // Note that paths are relative to the working directory
-    // Not the binary directory (where the executable is stored)
-    char buffer[256];
-    char* val = getcwd(buffer, sizeof(buffer));
-    if(val)
-    {
-        std::cout << buffer << '\n';
-    }
 
-    vertCode = LoadFile(vertPath);
-    fragCode = LoadFile(fragPath);
+    vertCode = Resource::ReadTextFile(vertPath);
+    fragCode = Resource::ReadTextFile(fragPath);
     // TODO: add optional geometry shader setup
 
     // Test code, output shader code
-    std::cout << vertPath << '\n';
-    std::cout << "vertex code: " << vertCode << '\n';
+    Log::DebugMsg("Path to vertex shader: " + vertPath);
+    Log::DebugMsg("Vertex shader code: " + vertCode);
 
-    std::cout << fragPath << '\n';
-    std::cout << "frag code: " << fragCode << '\n';
+    Log::DebugMsg("Path to fragment shader: " + fragPath);
+    Log::DebugMsg("Fragment shader code: " + fragCode);
 
 
     // Convert content string to const char
@@ -55,13 +43,13 @@ void Shader::Create(const std::string& vertPath, const std::string& fragPath)
     mVertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(mVertex, 1, &vShaderCode, NULL);
     glCompileShader(mVertex);
-    Error("VERTEX");
+    Error::ShaderError("VERTEX", mVertex);
 
     // Fragment Shader
     mFragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(mFragment, 1, &fShaderCode, NULL);
     glCompileShader(mFragment);
-    Error("FRAGMENT");
+    Error::ShaderError("FRAGMENT", mFragment);
 
     /*
     * ---- 3. Link Shaders ----
@@ -71,22 +59,11 @@ void Shader::Create(const std::string& vertPath, const std::string& fragPath)
     glAttachShader(mHandle, mVertex);
     glAttachShader(mHandle, mFragment);
     glLinkProgram(mHandle);
-    Error("PROGRAM");
-
-    int infoLength;
-    char text[1000];
-    glGetProgramInfoLog(mHandle, 1000, &infoLength, text);
+    Error::ShaderError("PROGRAM", mHandle);
 
     // Can delete these once their linked
-    // Note that these vars are used in Shader::Error()
-    // Might want to clean that up. No risk of memory leak just bad code
     glDeleteShader(mVertex);
     glDeleteShader(mFragment);
-
-    if(infoLength > 0)
-    {
-        std::cout << "Shader" << '\n' << text << '\n';
-    }
 
     /*
     * ---- 4. Fill Uniform and Attribute Maps ----
@@ -103,8 +80,6 @@ void Shader::Create(const std::string& vertPath, const std::string& fragPath)
 
     // Sets count to number of active uniforms
     glGetProgramiv(mHandle, GL_ACTIVE_UNIFORMS, &count);
-
-    std::cout << count << '\n';
 
     for (int i = 0; i < count; i++)
     {
@@ -126,27 +101,29 @@ void Shader::Create(const std::string& vertPath, const std::string& fragPath)
         * name: returns string containing name of variable
         */
         glGetActiveUniform(mHandle, (GLuint)i, bufSize, &length, &size, &type, name);
-        
-        std::string strName(name, length);
-        mUniformLocations.insert(std::make_pair(strName, i));
+        int loc = glGetUniformLocation(mHandle, name);
 
-        std::cout << "Uniform name:" << strName << '\n' << "Uniform location:" << i << '\n';
+        std::string strName(name, length);
+        mUniformLocations.insert(std::make_pair(strName, loc));
+
+        Log::DebugMsg("Uniform name: " + strName + '\n' + "Uniform location: " + std::to_string(loc));
     }
 
     // Attributes
     glGetProgramiv(mHandle, GL_ACTIVE_ATTRIBUTES, &count);
 
-    std::cout << count << '\n';
-
     for (int i = 0; i < count; i++)
     {
         glGetActiveAttrib(mHandle, (GLuint)i, bufSize, &length, &size, &type, name);
+        int loc = glGetAttribLocation(mHandle, name);
 
         std::string strName(name, length);
-        mAttribLocations.insert(std::make_pair(strName, i));
+        mAttribLocations.insert(std::make_pair(strName, loc));
 
-        std::cout << "Attribute name:" << strName << '\n' << "Attribute location:" << i << '\n';
+         Log::DebugMsg("Attribute name: " + strName + '\n' + "Attribute location: " + std::to_string(loc));
     }
+
+    Error::GLError();
 }
 
 void Shader::Use()
@@ -196,72 +173,4 @@ void Shader::SetVec3(std::string name, glm::vec3& data)
 void Shader::DeleteShader()
 {
     glDeleteProgram(mHandle);
-}
-
-void Shader::Error(std::string type)
-{
-    int success;
-    char infoLog[1024];
-
-    if (type == "PROGRAM") 
-    {
-        glGetProgramiv(mHandle, GL_LINK_STATUS, &success);
-        if (!success) {
-            glGetProgramInfoLog(mHandle, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << '\n';
-            exit(-1);
-        }
-    }
-    else if(type == "FRAGMENT") 
-    {
-        glGetShaderiv(mFragment, GL_COMPILE_STATUS, &success);
-        if (!success) {
-            glGetShaderInfoLog(mFragment, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::" << type << "::COMPILATION_FAILED\n" << infoLog << '\n';
-            exit(-1);
-        }
-    }
-    else if (type == "VERTEX")
-    {
-        glGetShaderiv(mVertex, GL_COMPILE_STATUS, &success);
-        if (!success) {
-            glGetShaderInfoLog(mVertex, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::" << type << "::COMPILATION_FAILED\n" << infoLog << '\n';
-            exit(-1);
-        }
-    }
-    else
-    {
-        exit(-1);
-    }
-}
-
-std::string Shader::LoadFile(const std::string& filePath)
-{
-    std::string result;
-    std::ifstream in(filePath, std::ios::in | std::ios::binary);
-
-    if(in)
-    {
-        in.seekg(0, std::ios::end);
-        size_t size = in.tellg();
-        if(size != -1)
-        {
-            result.resize(size);
-            in.seekg(0, std::ios::beg);
-            in.read(&result[0], size);
-        }
-        else
-        {
-            std::cout << "Could not read from file:" << filePath << '\n';
-            exit(-1);
-        }
-    }
-    else
-    {
-        std::cout << "Could not open file:" << filePath << '\n';
-        exit(-1);
-    }
-
-    return result;
 }

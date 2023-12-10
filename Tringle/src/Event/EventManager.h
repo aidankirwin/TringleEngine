@@ -4,15 +4,7 @@
 #include <string>
 #include <vector>
 
-struct Event
-{
-	std::vector<EventArgs> Args;
-	std::string Type;
-
-	static std::vector<std::string> Types;
-};
-
-struct EventArgs
+struct EventArg
 {
 	enum Type
 	{
@@ -22,15 +14,23 @@ struct EventArgs
 		STRING
 	};
 
-	Type type;
+	Type Time;
 
-	union
+	union Arg
 	{
 		int asInt;
 		float asFloat;
 		bool asBool;
-		std::string asString;
+		char asString[100];
 	};
+};
+
+struct Event
+{
+	std::vector<EventArg> Args;
+	std::string Type;
+
+	static std::vector<std::string> Types;
 };
 
 class EventManager : public Singleton<EventManager>
