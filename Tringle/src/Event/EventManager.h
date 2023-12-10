@@ -1,12 +1,36 @@
 #pragma once
 
 #include "Singleton.h"
+#include <string>
+#include <vector>
+
+struct EventArg
+{
+	enum Type
+	{
+		INTEGER,
+		FLOAT,
+		BOOL,
+		STRING
+	};
+
+	Type Time;
+
+	union Arg
+	{
+		int asInt;
+		float asFloat;
+		bool asBool;
+		char asString[100];
+	};
+};
 
 struct Event
 {
-	// EventType Type;
-	// EventArgs Args;
-	// -- Need a way to make generic arguments
+	std::vector<EventArg> Args;
+	std::string Type;
+
+	static std::vector<std::string> Types;
 };
 
 class EventManager : public Singleton<EventManager>

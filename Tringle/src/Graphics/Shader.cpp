@@ -5,52 +5,31 @@ Shader::Shader()
 
 }
 
-void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
+void Shader::Create(const std::string& vertPath, const std::string& fragPath)
 {
     /*
     * ---- 1. Read Shader Files ----
     * Inputs:
-    *   (a) vertPath: string path of vertex shader
-    *   (b) fragPath: string path of fragment shader
+    *   (a) vertPath: path of vertex shader
+    *   (b) fragPath: path of fragment shader
     * Outputs:
     *   (a) vShaderCode: const char of vertex shader code
     *   (b) fShaderCode: const char of fragment shader code
     */
 
     std::string vertCode, fragCode;
-    std::ifstream vShaderFile, fShaderFile;
 
-    // Convert file paths from string to const char
-    const char* vertPathChar = vertPath.c_str();
-    const char* fragPathChar = fragPath.c_str();
+    vertCode = Resource::ReadTextFile(vertPath);
+    fragCode = Resource::ReadTextFile(fragPath);
+    // TODO: add optional geometry shader setup
 
-    vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    // Test code, output shader code
+    Log::DebugMsg("Path to vertex shader: " + vertPath);
+    Log::DebugMsg("Vertex shader code: " + vertCode);
 
-    try
-    {
-        // Open the files
-        vShaderFile.open(vertPathChar);
-        fShaderFile.open(fragPathChar);
+    Log::DebugMsg("Path to fragment shader: " + fragPath);
+    Log::DebugMsg("Fragment shader code: " + fragCode);
 
-        // Read file
-        std::stringstream vShaderStream, fShaderStream;
-        vShaderStream << vShaderFile.rdbuf();
-        fShaderStream << fShaderFile.rdbuf();
-
-        // Close the files
-        vShaderFile.close();
-        fShaderFile.close();
-
-        // Convert stream to string
-        vertCode = vShaderStream.str();
-        fragCode = fShaderStream.str();
-    }
-    catch(std::ifstream::failure& error)
-    {
-        // TODO: Logs should be handled in a separate class
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << error.what() << '\n';
-    }
 
     // Convert content string to const char
     const char* vShaderCode = vertCode.c_str();
@@ -64,13 +43,13 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
     mVertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(mVertex, 1, &vShaderCode, NULL);
     glCompileShader(mVertex);
-    Error("VERTEX");
+    Error::ShaderError("VERTEX", mVertex);
 
     // Fragment Shader
     mFragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(mFragment, 1, &fShaderCode, NULL);
     glCompileShader(mFragment);
-    Error("FRAGMENT");
+    Error::ShaderError("FRAGMENT", mFragment);
 
     /*
     * ---- 3. Link Shaders ----
@@ -80,7 +59,11 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
     glAttachShader(mHandle, mVertex);
     glAttachShader(mHandle, mFragment);
     glLinkProgram(mHandle);
-    Error("PROGRAM");
+    Error::ShaderError("PROGRAM", mHandle);
+
+    // Can delete these once their linked
+    glDeleteShader(mVertex);
+    glDeleteShader(mFragment);
 
     /*
     * ---- 4. Fill Uniform and Attribute Maps ----
@@ -118,11 +101,12 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
         * name: returns string containing name of variable
         */
         glGetActiveUniform(mHandle, (GLuint)i, bufSize, &length, &size, &type, name);
-        
-        std::string strName((char*)&name[0], length - 1);
-        mUniformLocations.insert(std::make_pair(strName, i));
+        int loc = glGetUniformLocation(mHandle, name);
 
-        std::cout << "Uniform name:" << strName << '\n' << "Uniform location:" << i << '\n';
+        std::string strName(name, length);
+        mUniformLocations.insert(std::make_pair(strName, loc));
+
+        Log::DebugMsg("Uniform name: " + strName + '\n' + "Uniform location: " + std::to_string(loc));
     }
 
     // Attributes
@@ -131,15 +115,18 @@ void Shader::LoadFromFiles(std::string vertPath, std::string fragPath)
     for (int i = 0; i < count; i++)
     {
         glGetActiveAttrib(mHandle, (GLuint)i, bufSize, &length, &size, &type, name);
+        int loc = glGetAttribLocation(mHandle, name);
 
-        std::string strName((char*)&name[0], length);
-        mAttribLocations.insert(std::make_pair(strName, i));
+        std::string strName(name, length);
+        mAttribLocations.insert(std::make_pair(strName, loc));
 
-        std::cout << "Attribute name:" << strName << '\n' << "Attribute location:" << i << '\n';
+         Log::DebugMsg("Attribute name: " + strName + '\n' + "Attribute location: " + std::to_string(loc));
     }
+
+    Error::GLError();
 }
 
-Shader Shader::Use()
+void Shader::Use()
 {
     glUseProgram(mHandle);
 }
@@ -185,45 +172,5 @@ void Shader::SetVec3(std::string name, glm::vec3& data)
 
 void Shader::DeleteShader()
 {
-    glDeleteShader(mVertex);
-    glDeleteShader(mFragment);
     glDeleteProgram(mHandle);
-}
-
-void Shader::Error(std::string type)
-{
-    int success;
-    char infoLog[1024];
-
-    if (type == "PROGRAM") 
-    {
-        glGetProgramiv(mHandle, GL_LINK_STATUS, &success);
-        if (!success) {
-            glGetProgramInfoLog(mHandle, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << '\n';
-            exit(-1);
-        }
-    }
-    else if(type == "FRAGMENT") 
-    {
-        glGetShaderiv(mFragment, GL_COMPILE_STATUS, &success);
-        if (!success) {
-            glGetShaderInfoLog(mFragment, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::" << type << "::COMPILATION_FAILED\n" << infoLog << '\n';
-            exit(-1);
-        }
-    }
-    else if (type == "VERTEX")
-    {
-        glGetShaderiv(mVertex, GL_COMPILE_STATUS, &success);
-        if (!success) {
-            glGetShaderInfoLog(mVertex, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::" << type << "::COMPILATION_FAILED\n" << infoLog << '\n';
-            exit(-1);
-        }
-    }
-    else
-    {
-        exit(-1);
-    }
 }

@@ -5,12 +5,14 @@
 #include "glad.h"
 #include "glm.hpp"
 
+#include "Resources.h"
+
 class Texture
 {
 public:
 	Texture();
 
-	void LoadFromFiles(std::string texturePath, bool gamma);
+	void Create(std::string texturePath);
 	void Use();
 
 	// Texture unit ID, 0 by default

@@ -3,9 +3,9 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
+
+#include "Log.h"
+#include "Resources.h"
 
 #include "glm.hpp"
 #include "glad.h"
@@ -16,13 +16,13 @@ public:
 	Shader();
 
 	// Creates a shader program given a vertex and fragment shader file
-	void LoadFromFiles(std::string vertPath, std::string fragPath);
+	void Create(const std::string& vertPath, const std::string& fragPath);
 
 	/*
 	* Makes this shader the active shader in the app
 	* Returns this shader object
 	*/
-	Shader Use();
+	void Use();
 
 	// Uniform and attribute functions
 
@@ -46,23 +46,20 @@ public:
 	*	(b) layout(location = 1) in vec2 uv
 	*/
 
-	// Required default uniform setters
+	// Uniform setters
+	// Must call Shader::Use() before calling these
 	void SetMat4(std::string name, glm::mat4& data);
 	void SetVec2(std::string name, glm::vec2& data);
 	void SetVec3(std::string name, glm::vec3& data);
 
-	// Additional uniform setters
 	void SetInt(std::string name, int data);
 	void SetFloat(std::string name, float data);
 
 	void DeleteShader();
-private:
+
 	// Shader handle
 	unsigned int mHandle;
-
-	// Error handling
-	void Error(std::string type);
-
+private:
 	// Vertex and fragment shader IDs
 	unsigned int mVertex, mFragment;
 
@@ -71,22 +68,3 @@ private:
 	std::map<std::string, int> mUniformLocations;
 	std::map<std::string, int> mAttribLocations;
 };
-
-/*
----- Default Vertex Shader ----
-#version 330 core
-layout (location = 0) in vec3 aPos;         // model coords of a vertex
-layout (location = 1) in vec2 aTexCoord;    // uv coords of corresponding texture
-
-out vec2 TexCoord;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-void main()
-{
-    gl_Position = projection * view * model * vec4(aPos, 1.0f);
-	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
-}
-*/
