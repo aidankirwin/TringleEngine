@@ -24,15 +24,8 @@ public:
     void AddMesh(Mesh mesh, int id);
     void DeleteMesh(int id);
     Mesh* GetMesh(int id);
-
-    // Mesh handling
-    void InitializeMesh(Mesh* mesh);
-    void Draw(Mesh* mesh, Shader shader);
 private:
     std::map<std::string, Mesh*>* mMesh;
     std::map<std::string, Texture*>* mTexture;
     std::map<std::string, Shader*>* mShader;
-
-    // Texture handling
-
 };

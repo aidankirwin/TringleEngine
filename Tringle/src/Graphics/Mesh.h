@@ -8,12 +8,13 @@
 #include "Log.h"
 #include "gtc/matrix_transform.hpp"
 
-// temp
+// temp, for glm::to_string
 #include "ext.hpp"
 
 struct Vertex
 {
     glm::vec3 Position;     // 12 bytes
+    glm::vec3 Normals;      // 12 bytes
     glm::vec2 TexCoord;     // 8 bytes
 };
 

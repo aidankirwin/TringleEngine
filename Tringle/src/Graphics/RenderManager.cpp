@@ -24,13 +24,3 @@ void RenderManager::ShutDown()
 {
     
 }
-
-void RenderManager::InitializeMesh(Mesh* mesh)
-{
-   
-}
-
-void RenderManager::Draw(Mesh* mesh, Shader shader)
-{
-
-}

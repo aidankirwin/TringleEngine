@@ -45,9 +45,14 @@ void Mesh::Initialize()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);                          // 3 floats, entire thing is sizeof(vertex), but this is first 3 floats starting at 0 bytes offset
     Log::DebugMsg("Enable vertex attribute 0 and set size and offset");
     Error::GLError();
+    // vertex Positions
+    glEnableVertexAttribArray(1);                                                                       // Enable location=0
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normals));  // 3 floats, entire thing is sizeof(vertex), but this is 3 floats after 12 bytes offset
+    Log::DebugMsg("Enable vertex attribute 0 and set size and offset");
+    Error::GLError();
     // vertex texture coords
-    glEnableVertexAttribArray(1);                                                                       // Enable location=1
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoord)); // 2 floats, entire thing is sizeof(vertex), but this is 2 floats after 12 bytes offset
+    glEnableVertexAttribArray(2);                                                                       // Enable location=1
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoord)); // 2 floats, entire thing is sizeof(vertex), but this is 2 floats after 24 bytes offset
     Log::DebugMsg("Enable vertex attribute 1 and set size and offset");
     Error::GLError();
 

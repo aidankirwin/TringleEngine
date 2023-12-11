@@ -44,11 +44,11 @@ namespace Tringle
         shader.SetMat4("projection", proj);
         Error::GLError();
 
-                      // Position data             // Texture data
-        Vertex v1 = { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) }; // 0
-        Vertex v2 = { glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f) }; // 1
-        Vertex v3 = { glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f) }; // 2
-        Vertex v4 = { glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) }; // 3
+                      // Position data             // Normals data              // Texture data
+        Vertex v1 = { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) }; // 0
+        Vertex v2 = { glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f) }; // 1
+        Vertex v3 = { glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f) }; // 2
+        Vertex v4 = { glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f) }; // 3
 
         std::vector<Vertex> vert = { v1, v2, v3, v4 };
         std::vector<unsigned int> indices = { 0,  1,  3,  3,  1,  2 };
