@@ -14,47 +14,49 @@
 # 
 # Cmake file from: https://github.com/daw42/glslcookbook
 
-message(STATUS "[LOG] Searching for GLFW3")
+if(WIN32)
+	message(STATUS "[LOG] Searching for GLFW3")
 
-set( _glfw3_HEADER_SEARCH_DIRS
-"/usr/include"
-"/usr/local/include"
-"${CMAKE_SOURCE_DIR}/Tringle/vendor/include"
-"C:/Program Files (x86)/glfw/include" )
+	set( _glfw3_HEADER_SEARCH_DIRS
+	"/usr/include"
+	"/usr/local/include"
+	"${CMAKE_SOURCE_DIR}/Tringle/vendor/include"
+	"C:/Program Files (x86)/glfw/include" )
 
-set( _glfw3_LIB_SEARCH_DIRS
-"/usr/lib"
-"/usr/local/lib"
-"${CMAKE_SOURCE_DIR}/Tringle/vendor/lib/GLFW"
-"C:/Program Files (x86)/glfw/lib-mingw-w64")
+	set( _glfw3_LIB_SEARCH_DIRS
+	"/usr/lib"
+	"/usr/local/lib"
+	"${CMAKE_SOURCE_DIR}/Tringle/vendor/lib/GLFW"
+	"C:/Program Files (x86)/glfw/lib-mingw-w64")
 
-# Check environment for root search directory
-set( _glfw3_ENV_ROOT $ENV{GLFW3_ROOT} )
-if( NOT GLFW3_ROOT AND _glfw3_ENV_ROOT )
-	set(GLFW3_ROOT ${_glfw3_ENV_ROOT} )
+	# Check environment for root search directory
+	set( _glfw3_ENV_ROOT $ENV{GLFW3_ROOT} )
+	if( NOT GLFW3_ROOT AND _glfw3_ENV_ROOT )
+		set(GLFW3_ROOT ${_glfw3_ENV_ROOT} )
+	endif()
+
+	# Put user specified location at beginning of search
+	if( GLFW3_ROOT )
+		list( INSERT _glfw3_HEADER_SEARCH_DIRS 0 "${GLFW3_ROOT}/include" )
+		list( INSERT _glfw3_LIB_SEARCH_DIRS 0 "${GLFW3_ROOT}/lib" )
+	endif()
+
+	# Search for the header
+	FIND_PATH(GLFW3_INCLUDE_DIR "GLFW/glfw3.h"
+	PATHS ${_glfw3_HEADER_SEARCH_DIRS} )
+
+	# Search for the library
+	FIND_LIBRARY(GLFW3_LIBRARY NAMES glfw3 glfw
+	PATHS ${_glfw3_LIB_SEARCH_DIRS} )
+	INCLUDE(FindPackageHandleStandardArgs)
+	FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLFW3 DEFAULT_MSG
+	GLFW3_LIBRARY GLFW3_INCLUDE_DIR)
+
+	if(GLFW3_FOUND)
+		MESSAGE(STATUS "[LOG] GLFW3 found")
+		SET(GLFW3_INCLUDE_DIR "${GLFW3_INCLUDE_DIR}")
+		MESSAGE(STATUS "[LOG] - GLFW3_INCLUDE_DIR = ${GLFW3_INCLUDE_DIR}")
+		SET(GFLW3_LIBRARY "${GLFW3_LIBRARY}")
+		MESSAGE(STATUS "[LOG] - GLFW3_LIBRARY = ${GLFW3_LIBRARY}")
+	endif(GLFW3_FOUND)
 endif()
-
-# Put user specified location at beginning of search
-if( GLFW3_ROOT )
-	list( INSERT _glfw3_HEADER_SEARCH_DIRS 0 "${GLFW3_ROOT}/include" )
-	list( INSERT _glfw3_LIB_SEARCH_DIRS 0 "${GLFW3_ROOT}/lib" )
-endif()
-
-# Search for the header
-FIND_PATH(GLFW3_INCLUDE_DIR "GLFW/glfw3.h"
-PATHS ${_glfw3_HEADER_SEARCH_DIRS} )
-
-# Search for the library
-FIND_LIBRARY(GLFW3_LIBRARY NAMES glfw3 glfw
-PATHS ${_glfw3_LIB_SEARCH_DIRS} )
-INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLFW3 DEFAULT_MSG
-GLFW3_LIBRARY GLFW3_INCLUDE_DIR)
-
-IF(GLFW3_FOUND)
-	MESSAGE(STATUS "[LOG] GLFW3 found")
-    SET(GLFW3_INCLUDE_DIR "${GLFW3_INCLUDE_DIR}")
-    MESSAGE(STATUS "[LOG] - GLFW3_INCLUDE_DIR = ${GLFW3_INCLUDE_DIR}")
-	SET(GFLW3_LIBRARY "${GLFW3_LIBRARY}")
-    MESSAGE(STATUS "[LOG] - GLFW3_LIBRARY = ${GLFW3_LIBRARY}")
-ENDIF(GLFW3_FOUND)

@@ -19,6 +19,10 @@ void Window::StartUp()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    #ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    #endif
+
     // Create window
     mWindow = glfwCreateWindow(mWidth, mHeight, mTitle, NULL, NULL);
 
@@ -32,6 +36,8 @@ void Window::StartUp()
 
     glfwMakeContextCurrent(mWindow);
 
+
+
     // Error check.
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) 
     {
@@ -41,37 +47,19 @@ void Window::StartUp()
 
     glViewport(0, 0, mWidth, mHeight);
 
-    // GLFW user pointer for callbacks
-    // Stores address of instance handling mWindow to forward to callbacks
-    glfwSetWindowUserPointer(mWindow, reinterpret_cast<void*>(this));
-
-    // TODO: make this conditional for resizable windows only
-    auto framebufferCallback = [](GLFWwindow* glfwWindow, int width, int height)
-    {
-        Window* window = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
-        window->FramebufferSizeCallback(width, height);
-    };
-
-    // TODO: test once drawcalls are setup
-    // glfwSetFramebufferSizeCallback(mWindow, framebufferCallback);
-
-
-    // TODO: need to close window when 'X' is hit
-    // This could be done by following same callback setup and calling some InputManager class
+    glEnable(GL_DEPTH_TEST);
 }
 
-void Window::PollEvents()
-{
-    glfwMakeContextCurrent(mWindow);
-    glfwPollEvents();
-}
-
-void Window::Update()
+void Window::StartRender()
 {
     glClearColor(0.1f, 0.3f, 0.5f, 1.0f); // TODO: remove placeholder
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
 
+void Window::SwapBuffersAndPollEvents()
+{
     glfwSwapBuffers(mWindow);
+    glfwPollEvents();
 }
 
 void Window::ShutDown()

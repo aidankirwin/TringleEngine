@@ -2,12 +2,12 @@
 
 #include "Application.h"
 #include "RenderManager.h"
-#include "WindowManager.h"
+#include "Window.h"
 #include "SceneManager.h"
 #include "TimeManager.h"
 #include "Singleton.h"
-#include "Core.h"
 #include "EventManager.h"
+#include "Camera.h"
 
 namespace Tringle
 {
@@ -38,9 +38,50 @@ namespace Tringle
             mRunning = false;
         }
 
+        // Bin directory path variable
+        // Only had path issues when testing on mac
+        // But nice to have
+        std::string BIN_PATH;
+        void SetPath(char *argv[])
+        {
+            std::string path;
+            size_t end;
+
+            // Get path
+            for(int i = 0; argv[i] !=0; i++)
+            {
+                path += argv[i];
+            }
+
+            // Remove program name
+            // Slash direction is OS dependent
+            #ifdef _WIN32
+            end = path.rfind("\\");
+            if(end != std::string::npos)
+            {
+                path.replace(end, 100, "\\");
+            }
+            #endif
+
+            #ifdef __APPLE__
+            end = path.rfind("/");
+            if (end != std::string::npos)
+            {
+                path.replace(end, 100, "/");
+            }
+            #endif
+
+            // Print for testing
+            // Should start storing print calls somewhere
+            std::cout << path << '\n';
+
+            BIN_PATH = path;
+        }
+
     private:
+        Window* mWindow;
+
         // Subsystem manager singletons
-        WindowManager mWindowManager;
         RenderManager mRenderManager;
         SceneManager   mSceneManager;
         TimeManager     mTimeManager;
